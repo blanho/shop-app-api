@@ -8,10 +8,10 @@ const register = async (req, res) => {
     throw new BadRequest("Please provide all values");
   }
 
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new BadRequest("Email already exists");
-  }
+  // const existingUser = await User.findOne({ email });
+  // if (existingUser) {
+  //   throw new BadRequest("Email already exists");
+  // }
 
   const isFirstAccount = (await User.countDocuments({})) === 0;
   const role = isFirstAccount ? "admin" : "user";
