@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const crypto = require("crypto");
 const sendMailRegistration = require("../utils/verifyEmail");
+const resetPasswordVerification = require("../utils/resetPassword");
 const createUserPayload = require("../utils/createUserPayload");
 const Token = require("../models/Token");
 const { attachJWTtoCookies } = require("../utils/jwt");
@@ -115,11 +116,59 @@ const verifyEmail = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  res.send("forgot password");
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (user) {
+    const origin = `http://localhost:3000`;
+    const passwordToken = crypto.randomBytes(40).toString("hex");
+    const fiveMins = 1000 * 60 * 5;
+    const passwordTokenExpiration = new Date(Date.now() + fiveMins);
+    const name = user.lastName.concat(" ", user.firstName);
+
+    user.passwordToken = passwordToken;
+    user.passwordTokenExpiration = passwordTokenExpiration;
+
+    await user.save();
+
+    await resetPasswordVerification({
+      name,
+      email: user.email,
+      token: user.passwordToken,
+      origin,
+    });
+  }
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Please check your email for resetting password" });
 };
 
 const resetPassword = async (req, res) => {
-  res.send("reset password");
+  const { email, token, password } = req.body;
+
+  if (!email || !token || !password) {
+    throw new BadRequest("Please provide all values");
+  }
+
+  const user = await User.findOne({ email });
+  if (user) {
+    const currentDate = new Date();
+    if (
+      user.passwordToken === token &&
+      user.passwordTokenExpiration > currentDate
+    ) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordTokenExpiration = null;
+
+      await user.save();
+
+      return res
+        .status(StatusCodes.OK)
+        .json({ msg: "Changed password successfully" });
+    }
+  }
+  res.status(StatusCodes.BAD_REQUEST).json({ msg: "Something wrong" });
 };
 
 module.exports = {
