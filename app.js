@@ -3,16 +3,21 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-const connectDB = require("./db/connection");
-const notFound = require("./middleware/404");
-const errorHandling = require("./middleware/errors");
+const cookieParser = require("cookie-parser");
 
+// database
+const connectDB = require("./db/connection");
+
+// Router
 const authRouter = require("./routes/authRoutes");
 
 // Middleware
-app.use(express.json());
+const notFound = require("./middleware/404");
+const errorHandling = require("./middleware/errors");
 
-// Routes
+app.use(express.json());
+app.use(cookieParser(process.env.JWT_SECRET_KEY));
+
 app.use("/api/v1/auth", authRouter);
 
 // Port

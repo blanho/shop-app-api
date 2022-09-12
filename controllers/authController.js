@@ -3,6 +3,9 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const crypto = require("crypto");
 const sendMailRegistration = require("../utils/verifyEmail");
+const createUserPayload = require("../utils/createUserPayload");
+const Token = require("../models/Token");
+const { attachJWTtoCookies } = require("../utils/jwt");
 
 const register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -45,7 +48,51 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  res.send("login");
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequest("Please provide all values");
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Unauthenticated("Invalid Credentials");
+  }
+
+  const isCorrectPassword = await user.comparePassword(password);
+  if (!isCorrectPassword || !user.isVerifiedUser) {
+    throw new Unauthenticated("Invalid Credentials");
+  }
+
+  let refreshToken = "";
+  const payload = createUserPayload(user);
+
+  const existingToken = await Token.findOne({ user: user._id });
+  if (existingToken) {
+    const { isValid } = existingToken;
+    if (!isValid) {
+      throw new Unauthenticated("Invalid Credentials");
+    }
+    refreshToken = existingToken.refreshToken;
+    attachJWTtoCookies({ res, payload, refreshToken });
+    return res.status(StatusCodes.OK).json({ payload });
+  }
+
+  refreshToken = crypto.randomBytes(60).toString("hex");
+  const userAgent = req.headers["user-agent"];
+  const ip = req.ip;
+  const isValid = true;
+
+  const token = await Token.create({
+    refreshToken,
+    userAgent,
+    ip,
+    user: user._id,
+    isValid,
+  });
+
+  attachJWTtoCookies({ res, payload, refreshToken });
+
+  res.status(StatusCodes.OK).json({ payload, token });
 };
 
 const logout = async (req, res) => {
