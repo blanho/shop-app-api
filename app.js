@@ -2,13 +2,15 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const connectDB = require("./db/connection");
-const { BadRequest } = require("./errors");
 const notFound = require("./middleware/404");
 const errorHandling = require("./middleware/errors");
+const authRouter = require("./routes/authRoutes");
 
-app.get("/", async (req, res) => {
-  res.send("Hello world");
-});
+// Middleware
+app.use(express.json());
+
+// Routes
+app.use("/api/v1/auth", authRouter);
 
 const PORT = process.env.PORT || 5000;
 
