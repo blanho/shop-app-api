@@ -1,5 +1,29 @@
+const { BadRequest } = require("../errors");
+const User = require("../models/User");
+const { StatusCodes } = require("http-status-codes");
+
 const register = async (req, res) => {
-  res.send("register");
+  const { firstName, lastName, email, password } = req.body;
+  if (!firstName || !lastName || !email || !password) {
+    throw new BadRequest("Please provide all values");
+  }
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new BadRequest("Email already exists");
+  }
+
+  const isFirstAccount = (await User.countDocuments({})) === 0;
+  const role = isFirstAccount ? "admin" : "user";
+
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+  });
+  res.status(StatusCodes.CREATED).json({ msg: "Created Successfully", user });
 };
 
 const login = async (req, res) => {

@@ -1,9 +1,12 @@
+require("express-async-errors");
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
-require("dotenv").config();
 const connectDB = require("./db/connection");
 const notFound = require("./middleware/404");
 const errorHandling = require("./middleware/errors");
+
 const authRouter = require("./routes/authRoutes");
 
 // Middleware
@@ -12,6 +15,7 @@ app.use(express.json());
 // Routes
 app.use("/api/v1/auth", authRouter);
 
+// Port
 const PORT = process.env.PORT || 5000;
 
 // Error handling
