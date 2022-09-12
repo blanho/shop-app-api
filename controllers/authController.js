@@ -1,4 +1,4 @@
-const { BadRequest } = require("../errors");
+const { BadRequest, Unauthenticated } = require("../errors");
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const crypto = require("crypto");
@@ -53,7 +53,18 @@ const logout = async (req, res) => {
 };
 
 const verifyEmail = async (req, res) => {
-  res.send("verify Email");
+  const { email, token } = req.body;
+  const user = await User.findOne({ email });
+  if (!user || user.verificationToken !== token) {
+    throw new Unauthenticated("Verification failed");
+  }
+
+  user.isVerifiedUser = true;
+  user.verifiedUserDate = Date.now();
+  user.verificationToken = "";
+
+  await user.save();
+  res.status(StatusCodes.OK).json({ msg: "Verify email successfully" });
 };
 
 const forgotPassword = async (req, res) => {
