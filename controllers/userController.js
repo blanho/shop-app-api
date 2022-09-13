@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
+const { NotFound } = require("../errors");
 const User = require("../models/User");
+const checkUserAuthorization = require("../utils/checkAuthorization");
 
 const getAllUsers = async (req, res) => {
   const user = await User.find({ role: "user" }).select(
@@ -9,7 +11,17 @@ const getAllUsers = async (req, res) => {
 };
 
 const getSingleUser = async (req, res) => {
-  res.send("Get Single User");
+  const { id } = req.params;
+  const user = await User.findOne({ _id: id }).select(
+    "-password -verificationToken -isVerifiedUser -verifiedUserDate"
+  );
+
+  if (!user) {
+    throw new NotFound(`Cannot find this user with id: ${id}`);
+  }
+  checkUserAuthorization(req.user, user);
+
+  res.status(StatusCodes.OK).json({ user });
 };
 
 const showCurrentUser = async (req, res) => {
