@@ -37,7 +37,15 @@ const updatePassword = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  res.send("Delete User");
+  const { id } = req.params;
+
+  const user = await User.findOne({ _id: id });
+  if (!user) {
+    throw new NotFound(`Cannot find this user with id: ${id}`);
+  }
+  user.remove();
+
+  res.status(StatusCodes.OK).json({ msg: "Deleted Successfully" });
 };
 
 module.exports = {
