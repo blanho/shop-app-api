@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
   },
   birthDate: {
     type: Date,
+    default: new Date(Date.now() - 5.68e11),
   },
   password: {
     type: String,

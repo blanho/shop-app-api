@@ -3,6 +3,10 @@ const { NotFound, BadRequest } = require("../errors");
 const User = require("../models/User");
 const checkUserAuthorization = require("../utils/checkAuthorization");
 const path = require("path");
+const createUserPayload = require("../utils/createUserPayload");
+const { attachJWTtoCookies } = require("../utils/jwt");
+const moment = require("moment");
+const Token = require("../models/Token");
 
 const getAllUsers = async (req, res) => {
   const user = await User.find({ role: "user" }).select(
@@ -33,7 +37,26 @@ const showCurrentUser = async (req, res) => {
 };
 
 const updateUserInfo = async (req, res) => {
-  res.send("Update User");
+  const { firstName, lastName, birthDate, image } = req.body;
+  if (!firstName || !lastName) {
+    throw new BadRequest("Please provide all values");
+  }
+
+  const user = await User.findOne({ _id: req.user.userId });
+
+  user.firstName = firstName;
+  user.lastName = lastName;
+  user.image = image || user.image;
+  user.birthDate = new Date(birthDate) || user?.birthDate;
+
+  await user.save();
+
+  const token = await Token.findOne({ user: req.user.userId });
+  const payload = createUserPayload(user);
+
+  attachJWTtoCookies({ res, payload, refreshToken: token.refreshToken });
+
+  res.status(StatusCodes.OK).json({ user: payload });
 };
 
 const uploadUserImage = async (req, res) => {
