@@ -14,6 +14,7 @@ const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
 const categoryRouter = require("./routes/categoryRoutes");
 const shipperRouter = require("./routes/shipperRoutes");
+const supplierRouter = require("./routes/supplierRoutes");
 
 // Middleware
 const notFound = require("./middleware/404");
@@ -28,6 +29,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/shipper", shipperRouter);
+app.use("/api/v1/supplier", supplierRouter);
 
 // Port
 const PORT = process.env.PORT || 5000;

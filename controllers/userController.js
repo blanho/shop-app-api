@@ -39,9 +39,6 @@ const showCurrentUser = async (req, res) => {
 
 const updateUserInfo = async (req, res) => {
   const { firstName, lastName, birthDate, image } = req.body;
-  if (!firstName || !lastName) {
-    throw new BadRequest("Please provide all values");
-  }
 
   const user = await User.findOne({ _id: req.user.userId });
 
@@ -51,8 +48,8 @@ const updateUserInfo = async (req, res) => {
     }
   }
 
-  user.firstName = firstName;
-  user.lastName = lastName;
+  user.firstName = firstName || user.firstName;
+  user.lastName = lastName || user.lastName;
   user.image = image || user.image;
   user.birthDate = new Date(birthDate) || user?.birthDate;
 
@@ -90,9 +87,6 @@ const updatePassword = async (req, res) => {
     throw new BadRequest("Please provide all values");
   }
   const user = await User.findOne({ _id: req.user.userId });
-
-  // Admin has the permission to change user password
-  checkUserAuthorization(req.user, user);
 
   const isCorrectPassword = await user.comparePassword(oldPassword);
   if (!isCorrectPassword) {

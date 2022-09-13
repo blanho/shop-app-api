@@ -27,10 +27,6 @@ const getSingleCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
   const { id: categoryId } = req.params;
-  const { categoryName } = req.body;
-  if (!categoryName) {
-    throw new BadRequest("Please provide category name");
-  }
 
   const category = await Category.findOneAndUpdate(
     { _id: categoryId },

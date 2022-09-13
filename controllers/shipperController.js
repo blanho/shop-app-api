@@ -32,15 +32,10 @@ const getSingleShipper = async (req, res) => {
 
 const updateShipper = async (req, res) => {
   const { id: shipperId } = req.params;
-  const { shipperName, phone } = req.body;
-
-  if (!shipperName || !phone) {
-    throw new BadRequest("Please provide all values");
-  }
 
   const shipper = await Shipper.findOneAndUpdate(
     { _id: shipperId },
-    { shipperName, phone },
+    { ...req.body },
     { new: true, runValidators: true }
   );
 
