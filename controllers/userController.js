@@ -5,7 +5,8 @@ const checkUserAuthorization = require("../utils/checkAuthorization");
 const path = require("path");
 const createUserPayload = require("../utils/createUserPayload");
 const { attachJWTtoCookies } = require("../utils/jwt");
-const moment = require("moment");
+const deleteImagePath = require("../utils/deleteImagePath");
+
 const Token = require("../models/Token");
 
 const getAllUsers = async (req, res) => {
@@ -43,6 +44,12 @@ const updateUserInfo = async (req, res) => {
   }
 
   const user = await User.findOne({ _id: req.user.userId });
+
+  if (image) {
+    if (!user.image.includes("default.jpg")) {
+      deleteImagePath(user.image);
+    }
+  }
 
   user.firstName = firstName;
   user.lastName = lastName;
@@ -103,6 +110,9 @@ const deleteUser = async (req, res) => {
   const user = await User.findOne({ _id: id });
   if (!user) {
     throw new NotFound(`Cannot find this user with id: ${id}`);
+  }
+  if (!user.image.includes("default.jpg")) {
+    deleteImagePath(user.image);
   }
   await user.remove();
 

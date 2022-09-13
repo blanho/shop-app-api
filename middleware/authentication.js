@@ -4,7 +4,7 @@ const { verifyJWT, attachJWTtoCookies } = require("../utils/jwt");
 
 const authenticatedUser = async (req, res, next) => {
   const { accessToken, refreshToken } = req.signedCookies;
-  console.log(refreshToken);
+
   try {
     if (accessToken) {
       const payload = verifyJWT(accessToken);

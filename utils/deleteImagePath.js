@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const deleteImagePath = (imagePath) => {
-  fs.unlink(path.join(__dirname, imagePath), (err) => {
+  fs.unlink(path.join(__dirname, "../public", imagePath), (err) => {
     if (err) throw err;
     console.log("Deleted file successfully");
   });
