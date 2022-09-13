@@ -1,5 +1,11 @@
+const { StatusCodes } = require("http-status-codes");
+const User = require("../models/User");
+
 const getAllUsers = async (req, res) => {
-  res.send("get All User");
+  const user = await User.find({ role: "user" }).select(
+    "-password -verificationToken -isVerifiedUser -verifiedUserDate"
+  );
+  res.status(StatusCodes.OK).json({ count: user.length, user });
 };
 
 const getSingleUser = async (req, res) => {
