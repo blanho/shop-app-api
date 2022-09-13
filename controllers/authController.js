@@ -97,7 +97,18 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.send("logout");
+  await Token.findOneAndDelete({ user: req.user.userId });
+
+  res.cookie("accessToken", "logout", {
+    httpOnly: true,
+    expires: new Date(),
+  });
+  res.cookie("refreshToken", "logout", {
+    httpOnly: true,
+    expires: new Date(),
+  });
+
+  res.status(StatusCodes.OK).json({ msg: "Logged out Successfully" });
 };
 
 const verifyEmail = async (req, res) => {
