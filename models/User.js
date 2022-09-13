@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: "/UserUploads/default.jpg",
+    default: "/User/default.jpg",
   },
   birthDate: {
     type: Date,

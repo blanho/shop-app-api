@@ -4,6 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
 
 // database
 const connectDB = require("./db/connection");
@@ -18,6 +19,8 @@ const errorHandling = require("./middleware/errors");
 
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
+app.use(fileUpload());
+app.use(express.static("./public"));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);

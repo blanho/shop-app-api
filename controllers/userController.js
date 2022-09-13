@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { NotFound, BadRequest } = require("../errors");
 const User = require("../models/User");
 const checkUserAuthorization = require("../utils/checkAuthorization");
+const path = require("path");
 
 const getAllUsers = async (req, res) => {
   const user = await User.find({ role: "user" }).select(
@@ -33,6 +34,24 @@ const showCurrentUser = async (req, res) => {
 
 const updateUserInfo = async (req, res) => {
   res.send("Update User");
+};
+
+const uploadUserImage = async (req, res) => {
+  if (!req.files) {
+    throw new BadRequest("Not File Uploaded");
+  }
+  const image = Object.keys(req.files);
+  if (!req.files[image].mimetype.startsWith("image")) {
+    throw new BadRequest("Please upload an image");
+  }
+  const imagePath = path.join(
+    __dirname,
+    `../public/User/`,
+    `${req.files[image].name}`
+  );
+  await req.files[image].mv(imagePath);
+
+  res.status(StatusCodes.OK).json({ image: `/User/${req.files[image].name}` });
 };
 
 const updatePassword = async (req, res) => {
@@ -74,4 +93,5 @@ module.exports = {
   updateUserInfo,
   updatePassword,
   deleteUser,
+  uploadUserImage,
 };
