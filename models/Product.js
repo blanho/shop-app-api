@@ -14,7 +14,7 @@ const ProductSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: "/Product/default.jpg",
+      required: true,
     },
     unit: {
       type: String,
