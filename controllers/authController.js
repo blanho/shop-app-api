@@ -7,6 +7,7 @@ const resetPasswordVerification = require("../utils/resetPassword");
 const createUserPayload = require("../utils/createUserPayload");
 const Token = require("../models/Token");
 const { attachJWTtoCookies } = require("../utils/jwt");
+const hashToken = require("../utils/hashToken");
 
 const register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -137,7 +138,7 @@ const forgotPassword = async (req, res) => {
     const passwordTokenExpiration = new Date(Date.now() + fiveMins);
     const name = user.lastName.concat(" ", user.firstName);
 
-    user.passwordToken = passwordToken;
+    user.passwordToken = hashToken(passwordToken);
     user.passwordTokenExpiration = passwordTokenExpiration;
 
     await user.save();
@@ -165,7 +166,7 @@ const resetPassword = async (req, res) => {
   if (user) {
     const currentDate = new Date();
     if (
-      user.passwordToken === token &&
+      user.passwordToken === hashToken(token) &&
       user.passwordTokenExpiration > currentDate
     ) {
       user.password = password;
