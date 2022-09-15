@@ -8,7 +8,6 @@ const {
   updatePassword,
   updateUserInfo,
   deleteUser,
-  uploadUserImage,
 } = require("../controllers/userController");
 
 const authenticatedUser = require("../middleware/authentication");
@@ -21,8 +20,6 @@ router.get("/showUser", authenticatedUser, showCurrentUser);
 router.patch("/updateUser", authenticatedUser, updateUserInfo);
 
 router.patch("/updatePassword", authenticatedUser, updatePassword);
-
-router.post("/uploadImage", authenticatedUser, uploadUserImage);
 
 router
   .route("/:id")

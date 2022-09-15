@@ -14,11 +14,7 @@ const ProductSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      required: true,
-    },
-    unit: {
-      type: String,
-      required: true,
+      required: [true, "Please provide product image"],
     },
     price: {
       type: Number,
@@ -55,6 +51,9 @@ const ProductSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Category",
       required: true,
+    },
+    cloudinary_id: {
+      type: String,
     },
     user: {
       type: mongoose.Types.ObjectId,

@@ -1,11 +1,8 @@
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, BadRequest } = require("../errors");
 const Category = require("../models/Category");
+
 const createCategory = async (req, res) => {
-  const { categoryName } = req.body;
-  if (!categoryName) {
-    throw new BadRequest("Please provide category name");
-  }
   const category = await Category.create({ ...req.body });
   res.status(StatusCodes.CREATED).json({ category });
 };
@@ -20,7 +17,7 @@ const getSingleCategory = async (req, res) => {
 
   const category = await Category.findOne({ _id: categoryId });
   if (!category) {
-    throw new NotFound(`Not item can be found with id: ${categoryId}`);
+    throw new NotFound(`Not category can be found with id: ${categoryId}`);
   }
   res.status(StatusCodes.OK).json({ category });
 };
@@ -35,7 +32,7 @@ const updateCategory = async (req, res) => {
   );
 
   if (!category) {
-    throw new NotFound(`Not item can be found with id: ${categoryId}`);
+    throw new NotFound(`Not category can be found with id: ${categoryId}`);
   }
 
   res.status(StatusCodes.OK).json({ category });
@@ -46,7 +43,7 @@ const deleteCategory = async (req, res) => {
   const category = await Category.findOne({ _id: categoryId });
 
   if (!category) {
-    throw new NotFound(`Not item can be found with id: ${categoryId}`);
+    throw new NotFound(`Not category can be found with id: ${categoryId}`);
   }
 
   await category.remove();
