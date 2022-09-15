@@ -13,11 +13,18 @@ const {
 const authenticatedUser = require("../middleware/authentication");
 const authorizedUser = require("../middleware/authorization");
 
+const { uploadImageToCloud } = require("../utils/multer");
+
 router.get("/", authenticatedUser, authorizedUser("admin"), getAllUsers);
 
 router.get("/showUser", authenticatedUser, showCurrentUser);
 
-router.patch("/updateUser", authenticatedUser, updateUserInfo);
+router.patch(
+  "/updateUser",
+  authenticatedUser,
+  uploadImageToCloud.single("image"),
+  updateUserInfo
+);
 
 router.patch("/updatePassword", authenticatedUser, updatePassword);
 

@@ -24,11 +24,6 @@ const UserSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: "/User/default.jpg",
-  },
-  birthDate: {
-    type: Date,
-    default: new Date(Date.now() - 5.68e11),
   },
   password: {
     type: String,
@@ -55,6 +50,9 @@ const UserSchema = new mongoose.Schema({
   },
   passwordTokenExpiration: {
     type: Date,
+  },
+  cloudinary_id: {
+    type: String,
   },
 });
 

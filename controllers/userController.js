@@ -1,13 +1,12 @@
 const { StatusCodes } = require("http-status-codes");
-const { NotFound, BadRequest } = require("../errors");
+const { NotFound, BadRequest, Unauthorized } = require("../errors");
 const User = require("../models/User");
 const checkUserAuthorization = require("../utils/checkAuthorization");
-const path = require("path");
 const createUserPayload = require("../utils/createUserPayload");
 const { attachJWTtoCookies } = require("../utils/jwt");
-const deleteImagePath = require("../utils/deleteImagePath");
 
 const Token = require("../models/Token");
+const cloudinary = require("../utils/cloudinary");
 
 const getAllUsers = async (req, res) => {
   const user = await User.find({ role: "user" }).select(
@@ -37,21 +36,27 @@ const showCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
 
-const updateUserInfo = async (req, res) => {
-  const { firstName, lastName, birthDate, image } = req.body;
+const updateUserInfo = async (req, res, next) => {
+  const { firstName, lastName } = req.body;
 
   const user = await User.findOne({ _id: req.user.userId });
 
-  if (image) {
-    if (!user.image.includes("default.jpg")) {
-      deleteImagePath(user.image);
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      use_filename: true,
+      folder: "users",
+    });
+    user.image = result.secure_url;
+    if (!user.cloudinary_id) {
+      user.cloudinary_id = result.public_id;
+    } else {
+      await cloudinary.uploader.destroy(user.cloudinary_id);
+      user.cloudinary_id = result.public_id;
     }
   }
 
   user.firstName = firstName || user.firstName;
   user.lastName = lastName || user.lastName;
-  user.image = image || user.image;
-  user.birthDate = new Date(birthDate) || user.birthDate;
 
   await user.save();
 
@@ -85,9 +90,12 @@ const deleteUser = async (req, res) => {
   if (!user) {
     throw new NotFound(`No user can be found with id: ${id}`);
   }
-  if (!user.image.includes("default.jpg")) {
-    deleteImagePath(user.image);
+
+  if (user.role === "admin") {
+    throw new Unauthorized("Cannot delete this user");
   }
+
+  await cloudinary.uploader.destroy(user.cloudinary_id);
   await user.remove();
 
   res.status(StatusCodes.OK).json({ msg: "Deleted Successfully" });
