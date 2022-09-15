@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, BadRequest } = require("../errors");
+const Product = require("../models/Product");
 const Supplier = require("../models/Supplier");
 
 const createSupplier = async (req, res) => {
@@ -21,7 +22,9 @@ const getAllSuppliers = async (req, res) => {
 const getSingleSupplier = async (req, res) => {
   const { id: supplierId } = req.params;
 
-  const supplier = await Supplier.findOne({ _id: supplierId });
+  const supplier = await Supplier.findOne({ _id: supplierId }).populate(
+    "products"
+  );
 
   if (!supplier) {
     throw new NotFound(`Not item can be found with id: ${supplierId}`);
@@ -55,9 +58,21 @@ const deleteSupplier = async (req, res) => {
     throw new NotFound(`Not item can be found with id: ${supplierId}`);
   }
 
+  const supplierInProduct = await Product.findOne({ supplier: supplierId });
+  if (supplierInProduct) {
+    throw new Unauthorized(`Cannot delete this supplier`);
+  }
+
   await supplier.remove();
 
   res.status(StatusCodes.OK).json({ msg: "Deleted Successfully" });
+};
+
+const getSingleSupplierProducts = async (req, res) => {
+  const { id: supplierId } = req.params;
+
+  const products = await Product.find({ supplier: supplierId });
+  res.status(StatusCodes.OK).json({ products });
 };
 
 module.exports = {
@@ -66,4 +81,5 @@ module.exports = {
   getSingleSupplier,
   updateSupplier,
   deleteSupplier,
+  getSingleSupplierProducts,
 };

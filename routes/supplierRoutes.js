@@ -7,6 +7,7 @@ const {
   getAllSuppliers,
   getSingleSupplier,
   updateSupplier,
+  getSingleSupplierProducts,
 } = require("../controllers/supplierController");
 
 const authenticatedUser = require("../middleware/authentication");
@@ -22,5 +23,12 @@ router
   .patch(authenticatedUser, authorizedUser("admin"), updateSupplier)
   .get(authenticatedUser, authorizedUser("admin"), getSingleSupplier)
   .delete(authenticatedUser, authorizedUser("admin"), deleteSupplier);
+
+router.get(
+  "/:id/products",
+  authenticatedUser,
+  authorizedUser("admin"),
+  getSingleSupplierProducts
+);
 
 module.exports = router;
