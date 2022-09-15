@@ -50,7 +50,7 @@ const ProductSchema = new mongoose.Schema(
     category: {
       type: mongoose.Types.ObjectId,
       ref: "Category",
-      required: true,
+      required: [true, "Please provide category"],
     },
     cloudinary_id: {
       type: String,
@@ -63,7 +63,7 @@ const ProductSchema = new mongoose.Schema(
     supplier: {
       type: mongoose.Types.ObjectId,
       ref: "Supplier",
-      required: true,
+      required: [true, "Please provide supplier"],
     },
   },
   { timestamps: true }

@@ -1,21 +1,23 @@
-// const express = require("express");
-// const router = express.Router();
+const express = require("express");
+const router = express.Router();
 
-// const {
-//   getAllUsers,
-//   getSingleUser,
-//   showCurrentUser,
-//   updatePassword,
-//   updateUserInfo,
-// } = require("../controllers/userController");
-// const authenticatedUser = require("../middleware/authentication");
+const {
+  createReview,
+  deleteReview,
+  getAllReviews,
+  getSingleReview,
+  updateReview,
+} = require("../controllers/reviewController");
 
-// router.post("/register", register);
-// router.post("/verify-email", verifyEmail);
-// router.post("/login", login);
-// router.delete("/logout", authenticatedUser, logout);
+const authenticatedUser = require("../middleware/authentication");
+const authorizedUser = require("../middleware/authorization");
 
-// router.post("/forgot-password", forgotPassword);
-// router.post("/reset-password", resetPassword);
+router.route("/").get(getAllReviews).post(authenticatedUser, createReview);
 
-// module.exports = router;
+router
+  .route("/:id")
+  .patch(authenticatedUser, updateReview)
+  .get(authenticatedUser, getSingleReview)
+  .delete(authenticatedUser, deleteReview);
+
+module.exports = router;

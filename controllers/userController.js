@@ -28,7 +28,7 @@ const getSingleUser = async (req, res) => {
   // Find incoming user matches with user that is being found
   // Admin has the permission to get single user
 
-  checkUserAuthorization(req.user, user);
+  checkUserAuthorization(req.user, user._id);
 
   res.status(StatusCodes.OK).json({ user });
 };

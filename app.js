@@ -16,6 +16,7 @@ const categoryRouter = require("./routes/categoryRoutes");
 const shipperRouter = require("./routes/shipperRoutes");
 const supplierRouter = require("./routes/supplierRoutes");
 const productRouter = require("./routes/productRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
 
 // Middleware
 const notFound = require("./middleware/404");
@@ -31,6 +32,7 @@ app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/shippers", shipperRouter);
 app.use("/api/v1/suppliers", supplierRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // Port
 const PORT = process.env.PORT || 5000;
