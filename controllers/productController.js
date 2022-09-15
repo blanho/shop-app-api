@@ -3,6 +3,8 @@ const { NotFound, BadRequest } = require("../errors");
 const Category = require("../models/Category");
 const Product = require("../models/Product");
 const Supplier = require("../models/Supplier");
+const Review = require("../models/Review");
+
 const cloudinary = require("../utils/cloudinary");
 
 const createProduct = async (req, res) => {
@@ -55,7 +57,10 @@ const getAllProducts = async (req, res) => {
 const getSingleProduct = async (req, res) => {
   const { id: productId } = req.params;
 
-  const product = await Product.findOne({ _id: productId });
+  const product = await Product.findOne({ _id: productId }).populate({
+    path: "reviews",
+    select: "comment product",
+  });
   if (!product) {
     throw new NotFound(`No product can be found with id: ${productId}`);
   }
@@ -102,10 +107,17 @@ const deleteProduct = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Deleted product successfully" });
 };
 
+const getSingleProductReviews = async (req, res) => {
+  const { id: productId } = req.params;
+  const reviews = await Review.find({ product: productId });
+  res.status(StatusCodes.OK).json({ reviews });
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  getSingleProductReviews,
 };
