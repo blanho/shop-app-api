@@ -7,6 +7,7 @@ const {
   getAllCategories,
   getSingleCategory,
   updateCategory,
+  getSingleCategoryProducts,
 } = require("../controllers/categoryController");
 
 const authenticatedUser = require("../middleware/authentication");
@@ -16,6 +17,13 @@ router
   .route("/")
   .get(authenticatedUser, authorizedUser("admin"), getAllCategories)
   .post(authenticatedUser, authorizedUser("admin"), createCategory);
+
+router.get(
+  "/:id/products",
+  authenticatedUser,
+  authorizedUser("admin"),
+  getSingleCategoryProducts
+);
 
 router
   .route("/:id")
