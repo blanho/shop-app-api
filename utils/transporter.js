@@ -1,9 +1,9 @@
 const transporter = {
-  host: "smtp.ethereal.email",
-  port: 587,
+  host: process.env.NODEMAILER_HOST,
+  port: process.env.NODEMAILER_PORT,
   auth: {
-    user: "mario41@ethereal.email",
-    pass: "dRd34wEHCenExW9qwm",
+    user: process.env.NODEMAILER_USER,
+    pass: process.env.NODEMAILER_PASSWORD,
   },
 };
 

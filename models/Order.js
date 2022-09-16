@@ -17,6 +17,11 @@ const SingleOrderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  product: {
+    type: mongoose.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
 });
 
 const OrderSchema = new mongoose.Schema(
@@ -42,7 +47,7 @@ const OrderSchema = new mongoose.Schema(
       enum: ["pending", "failed", "paid", "delivered", "canceled"],
       default: "pending",
     },
-    orderItems: [SingleOrderSchema],
+    cartItems: [SingleOrderSchema],
     clientSecret: {
       type: String,
       required: true,
