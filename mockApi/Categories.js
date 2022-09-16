@@ -1,0 +1,61 @@
+const categories = {
+  count: 8,
+  categories: [
+    {
+      _id: "6320a5e57c6881eee1cf43b8",
+      categoryName: "Beverages",
+      __v: 0,
+      description: "Soft drinks, coffees, teas, beers, and ales",
+      id: "6320a5e57c6881eee1cf43b8",
+    },
+    {
+      _id: "6320a63c7c6881eee1cf43ba",
+      categoryName: "Condiments",
+      description: "Sweet and savory sauces, relishes, spreads, and seasonings",
+      __v: 0,
+      id: "6320a63c7c6881eee1cf43ba",
+    },
+    {
+      _id: "6320a64b7c6881eee1cf43bc",
+      categoryName: "Confections",
+      description: "Desserts, candies, and sweet breads",
+      __v: 0,
+      id: "6320a64b7c6881eee1cf43bc",
+    },
+    {
+      _id: "6320a65e7c6881eee1cf43be",
+      categoryName: "Dairy Products",
+      description: "Cheeses",
+      __v: 0,
+      id: "6320a65e7c6881eee1cf43be",
+    },
+    {
+      _id: "6320a66c7c6881eee1cf43c0",
+      categoryName: "Grains/Cereals",
+      description: "Breads, crackers, pasta, and cereal",
+      __v: 0,
+      id: "6320a66c7c6881eee1cf43c0",
+    },
+    {
+      _id: "6320a6797c6881eee1cf43c2",
+      categoryName: "Meat/Poultry",
+      description: "Prepared meats",
+      __v: 0,
+      id: "6320a6797c6881eee1cf43c2",
+    },
+    {
+      _id: "6320a68c7c6881eee1cf43c4",
+      categoryName: "Produce",
+      description: "Dried fruit and bean curd",
+      __v: 0,
+      id: "6320a68c7c6881eee1cf43c4",
+    },
+    {
+      _id: "6320a69b7c6881eee1cf43c6",
+      categoryName: "Seafood",
+      description: "Seaweed and fish",
+      __v: 0,
+      id: "6320a69b7c6881eee1cf43c6",
+    },
+  ],
+};

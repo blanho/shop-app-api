@@ -64,7 +64,7 @@ const getAllProducts = async (req, res) => {
     numericFilters,
   });
 
-  const products = await productQuery;
+  const products = await productQuery.select("-user");
   res.status(StatusCodes.OK).json({ count: products.length, products });
 };
 
