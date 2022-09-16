@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-const { NotFound, BadRequest } = require("../errors");
+const { NotFound, BadRequest, Unauthorized } = require("../errors");
 const Shipper = require("../models/Shipper");
+const Order = require("../models/Order");
 
 const createShipper = async (req, res) => {
   const shipper = await Shipper.create({ shipperName, phone });
@@ -15,7 +16,9 @@ const getAllShippers = async (req, res) => {
 const getSingleShipper = async (req, res) => {
   const { id: shipperId } = req.params;
 
-  const shipper = await Shipper.findOne({ _id: shipperId });
+  const shipper = await Shipper.findOne({ _id: shipperId }).populate({
+    path: "orders",
+  });
 
   if (!shipper) {
     throw new NotFound(`Not shipper can be found with id: ${shipperId}`);
@@ -49,9 +52,20 @@ const deleteShipper = async (req, res) => {
     throw new NotFound(`Not shipper can be found with id: ${shipperId}`);
   }
 
+  const shipperInOrders = await Order.findOne({ shipper: shipperId });
+  if (shipperInOrders) {
+    throw new Unauthorized("Cannot delete this shipper");
+  }
+
   await shipper.remove();
 
   res.status(StatusCodes.OK).json({ msg: "Deleted Successfully" });
+};
+
+const getSingleShipperOrders = async (req, res) => {
+  const { id: shipperId } = req.params;
+  const orders = await Order.find({ shipper: shipperId });
+  res.status(StatusCodes.OK).json({ count: orders.length, orders });
 };
 
 module.exports = {
@@ -60,4 +74,5 @@ module.exports = {
   getSingleShipper,
   updateShipper,
   deleteShipper,
+  getSingleShipperOrders,
 };

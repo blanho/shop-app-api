@@ -7,6 +7,7 @@ const {
   getAllShippers,
   getSingleShipper,
   updateShipper,
+  getSingleShipperOrders,
 } = require("../controllers/shipperController");
 
 const authenticatedUser = require("../middleware/authentication");
@@ -22,5 +23,9 @@ router
   .patch(authenticatedUser, authorizedUser("admin"), updateShipper)
   .get(authenticatedUser, authorizedUser("admin"), getSingleShipper)
   .delete(authenticatedUser, authorizedUser("admin"), deleteShipper);
+
+router
+  .route("/:id/orders")
+  .get(authenticatedUser, authorizedUser("admin"), getSingleShipperOrders);
 
 module.exports = router;
