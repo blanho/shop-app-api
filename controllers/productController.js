@@ -4,6 +4,7 @@ const Category = require("../models/Category");
 const Product = require("../models/Product");
 const Supplier = require("../models/Supplier");
 const Review = require("../models/Review");
+const searchSortFilterProduct = require("../utils/searchSortFilter");
 
 const cloudinary = require("../utils/cloudinary");
 
@@ -50,7 +51,20 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const products = await Product.find({});
+  const { featured, productName, sort, fields, page, limit, numericFilters } =
+    req.query;
+
+  const productQuery = searchSortFilterProduct({
+    featured,
+    productName,
+    sort,
+    fields,
+    page,
+    limit,
+    numericFilters,
+  });
+
+  const products = await productQuery;
   res.status(StatusCodes.OK).json({ count: products.length, products });
 };
 
